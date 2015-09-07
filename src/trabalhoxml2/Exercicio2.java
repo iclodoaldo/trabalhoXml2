@@ -127,7 +127,8 @@ public class Exercicio2 {
                                     if(periodos.getLocalName().equals("dia")){
                                         
                                     dia=periodos.getTextContent();
-                                    JOptionPane.showMessageDialog(null,dia);}
+                                    //JOptionPane.showMessageDialog(null,dia);
+                                    }
                                     
                                     if(periodos.getLocalName().equals("altura")){
                                     previsao+="Dia: "+dia+"\nManha: Tep. Media:"+media+" - Alt. Ondas:"+periodos.getTextContent()+"\n";
