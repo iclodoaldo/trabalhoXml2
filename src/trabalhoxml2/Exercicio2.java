@@ -5,10 +5,13 @@
  */
 package trabalhoxml2;
 
+import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
@@ -35,217 +38,174 @@ import org.xml.sax.SAXException;
  * @author clodoaldo
  */
 public class Exercicio2 {
-    private static String GuardarRaiz;
-
-
-    /**
-     * @param args the command line arguments
-     */
+    
     public static void main(String[] args) throws IOException {    
-        Map<String, Float> mapa = new HashMap<>();
         DOMParser parser= new DOMParser();
+                
         InputSource source = new InputSource("http://servicos.cptec.inpe.br/XML/cidade/7dias/634/previsao.xml");
-        try {
-            System.out.println("Iniciando Parser...");
-            parser.parse(source);
-            System.out.println("Parser Concluido...");
-            Document document=parser.getDocument();
-                       
-          
-            Element raiz = document.getDocumentElement();
-            //JOptionPane.showMessageDialog(null, raiz.getLocalName());
-            NodeList lista = raiz.getChildNodes();
-            String texto="";
-            String previsao="Previsao do Tempo:\n";
-            int contaDiaPrevisao=0;
-            //obtendo uma lista com os filhos da raiz
-            for (int i = 0; i < lista.getLength(); i++) {
-                Element filho = (Element)lista.item(i);
-                String tipo=null;
-                Integer qtde=null;
-                Float valor=null;
-                
-                
-                //lendo informacoes de nome da cidade, uf e data de atualizacao
-                if(filho.getLocalName().equals("nome")){
-                    texto+="Cidade: "+filho.getTextContent()+"\n";
-                }else if(filho.getLocalName().equals("uf")){
-                    texto+="UF: "+filho.getTextContent()+"\n";
-                }else if(filho.getLocalName().equals("atualizacao")){
-                    texto+="Atualizacao: "+filho.getTextContent()+"\n\n";
-                }
-                //if(filho.getLocalName().equals("previsao")){JOptionPane.showMessageDialog(null, contaDiaPrevisao);}
-                
-                
-                Double maxima=0.0;
-                Double minima=0.0;
-                NodeList listaFilho = filho.getChildNodes();
-                
-                for (int b =0; b<listaFilho.getLength();b++){
-                   if(filho.getLocalName().equals("previsao")){
-                       
-                       if (listaFilho.item(b).getLocalName().equals("maxima")){
-                           maxima=Double.parseDouble(listaFilho.item(b).getTextContent());
-                       }else
-                       if (listaFilho.item(b).getLocalName().equals("minima")){
-                           minima=Double.parseDouble(listaFilho.item(b).getTextContent());
-                       }
-                       
-                       Double media = (maxima+minima)/2;
-                      //previsao+=listaFilho.item(b).getLocalName()+": "+listaFilho.item(b).getTextContent()+" - ";
-                      if(listaFilho.item(b).getLocalName().equals("iuv")){
-                         // previsao+="Media: "+(media)+"\n";
-                      
-                      
-                      //ler o xml de previsao dia a dia                    
-                      DOMParser parser2= new DOMParser();
-                     
-                      
-                      //JOptionPane.showMessageDialog(null, "Dia - "+diaDaPrevisao);
-                      
-                      InputSource source2 = new InputSource("http://servicos.cptec.inpe.br/XML/cidade/634/dia/"+contaDiaPrevisao+"/ondas.xml");
-                            String texto2="";
-                      try {
-                            System.out.println("Iniciando Parser...");
-                            parser2.parse(source2);
-                            System.out.println("Parser Concluido...");
-                            Document document2=parser2.getDocument();
-                       
-          
-                            Element raiz2 = document2.getDocumentElement();
-                            //JOptionPane.showMessageDialog(null, raiz2.getLocalName());
-                            previsao+=(contaDiaPrevisao+1)+"º Dia.\n";
-                            NodeList lista2 = raiz2.getChildNodes();
-                            String dia=null;
-                            for(int c =0; c<lista2.getLength();c++){
-                                Element filho2 = (Element)lista2.item(c);
-                                if(filho2.getLocalName().equals("manha")){
-                                    NodeList listaPeriodo = filho2.getChildNodes();
-                                    for(int d=0; d<listaPeriodo.getLength();d++){
-                                    Element periodos = (Element)listaPeriodo.item(d);
-                                    
-                                    if(periodos.getLocalName().equals("dia")){
-                                        
-                                    dia=periodos.getTextContent();
-                                    //JOptionPane.showMessageDialog(null,dia);
-                                    }
-                                    
-                                    if(periodos.getLocalName().equals("altura")){
-                                    previsao+="Dia: "+dia+"\nManha: Tep. Media:"+media+" - Alt. Ondas:"+periodos.getTextContent()+"\n";
-                                    }
-                                    
-                                    }
-                                }
-                                if(filho2.getLocalName().equals("tarde")){
-                                    NodeList listaPeriodo = filho2.getChildNodes();
-                                    for(int d=0; d<listaPeriodo.getLength();d++){
-                                    Element periodos = (Element)listaPeriodo.item(d);
-                                    
-                                    if(periodos.getLocalName().equals("dia")){dia=periodos.getTextContent();}
-                                    
-                                    if(periodos.getLocalName().equals("altura")){
-                                    previsao+="Dia: "+dia+"\nTarde: Tep. Media:"+media+" - Alt. Ondas:"+periodos.getTextContent()+"\n";
-                                    }
-                                    
-                                    }
-                                }
-                                if(filho2.getLocalName().equals("noite")){
-                                    NodeList listaPeriodo = filho2.getChildNodes();
-                                    for(int d=0; d<listaPeriodo.getLength();d++){
-                                    Element periodos = (Element)listaPeriodo.item(d);
-                                    
-                                    if(periodos.getLocalName().equals("dia")){dia=periodos.getTextContent();}
-                                    
-                                    if(periodos.getLocalName().equals("agitacao")){
-                                    previsao+="Dia: "+dia+"\nNOITE: Tep. Media:"
-                                            +media+" - Alt. Ondas:"+periodos.getTextContent()
-                                            +" - Agitacao:"+periodos.getTextContent()+"\n";
-                                    }
-                                    
-                                    }
-                                }
-                                
-                            //previsao+=" - "+filho2.getLocalName();
-                            }
-                            //JOptionPane.showMessageDialog(null, texto2);
-                            
-                            
-                            
-                      }catch(Exception e){}
          
-                      
-                      
-                            //previsao+=texto2;
-                            //texto2="";
-                            previsao+="\n";contaDiaPrevisao++;
-                      
-                      }
-                      
-                     
-                      // JOptionPane.showMessageDialog(null, previsao);
-                   }
-                   
-                }                
-                if (mapa.containsKey(tipo)){
-                //mapa.put(tipo, valor*qtde+mapa.get(tipo));
+        /////////////////////////////////////////////////////////////////////
+             
+        DOMImplementation di = new DOMImplementationImpl();
+        int contaDiaPrevisao=0;
+        int campoPrev=0;
+        Document documentoFinal=null;
+        Element elemento1=null;
+        Element media=null;
+        String bosta="";
                 
-                }else{
-                //mapa.put(tipo, valor*qtde);
+            try{
+                parser.parse(source);
+                Document document=parser.getDocument();
+                Element raizPrevisaoSemana = document.getDocumentElement();
+                documentoFinal = di.createDocument(null, raizPrevisaoSemana.getLocalName(), null);
+                Element raizFinal=documentoFinal.getDocumentElement();
+                NodeList filhosPrevisaoSemana = raizPrevisaoSemana.getChildNodes();
+                
+        for(int cont = 0;cont < filhosPrevisaoSemana.getLength();cont++){//cidade, nome, uf, atualizacao...previsao
+               if (!filhosPrevisaoSemana.item(cont).getLocalName().equals("previsao")){
+                    elemento1 = documentoFinal.createElement(filhosPrevisaoSemana.item(cont).getLocalName());
+                    elemento1.setTextContent(filhosPrevisaoSemana.item(cont).getTextContent());
+                    raizFinal.appendChild(elemento1);
                 }
                 
-             //contaDiaPrevisao=0;    
-            }if (!texto.equals("")){
-            JOptionPane.showMessageDialog(null, texto+previsao);}
+               if(filhosPrevisaoSemana.item(cont).getLocalName().equals("previsao")){//cidade, nome, uf, atualizacao...previsao
                 
-              System.out.println(mapa);
+                   NodeList filhosDaPrevisao = filhosPrevisaoSemana.item(cont).getChildNodes();
+                   Element elemento2=null;
+                   
+                   Double maxima=null;
+                   Double minima=null;
+                   
+                    
+                for(int cont2 = 0;cont2 < filhosDaPrevisao.getLength();cont2++){//dia,tempo,maxima,minima,iuv 
+                          
+                    
+                    if(filhosDaPrevisao.item(cont2).getLocalName().equals("dia")){
+                        
+                        elemento1 = documentoFinal.createElement(filhosDaPrevisao.item(cont2).getLocalName());
+                        Text textoNomePrevisao = documentoFinal.createTextNode(filhosDaPrevisao.item(cont2).getTextContent());
+                        elemento1.appendChild(textoNomePrevisao);
+                        raizFinal.appendChild(elemento1);
+                    }else{
+                    
+                        if(filhosDaPrevisao.item(cont2).getLocalName().equals("maxima")){
+                            maxima=Double.parseDouble(filhosDaPrevisao.item(cont2).getTextContent());
+                        }
+                    
+                        if(filhosDaPrevisao.item(cont2).getLocalName().equals("minima")){
+                            minima=Double.parseDouble(filhosDaPrevisao.item(cont2).getTextContent());
+                            media = documentoFinal.createElement("media");
+                            media.setTextContent(Double.toString((maxima+minima)/2));
+                            elemento1.appendChild(media);
+                            raizFinal.appendChild(elemento1);
+                        bosta=Double.toString((maxima+minima)/2);    
+                        }
+                       
+                    
+                    } 
+                                                         
+                    DOMParser parser2= new DOMParser();
+                    InputSource source2 = new InputSource("http://servicos.cptec.inpe.br/XML/cidade/634/dia/"+contaDiaPrevisao+"/ondas.xml");
+                    
+              //  try {
+                    parser2.parse(source2);
+                    
+                    Document document2=parser2.getDocument();
+                    
+                    Element PrevisaoPorDia = document2.getDocumentElement();
+                    NodeList filhosPrevisaoPorDia = PrevisaoPorDia.getChildNodes();
+                    for(int outroCont=0; outroCont < filhosPrevisaoPorDia.getLength(); outroCont++){
+                        
+                        if(filhosDaPrevisao.item(cont2).getLocalName().equals("dia")){
+                            
+                            if(filhosPrevisaoPorDia.item(outroCont).getLocalName().equals("manha")){
+                            NodeList listaManha = filhosPrevisaoPorDia.item(outroCont).getChildNodes();
+                            Element manha = documentoFinal.createElement("manha");
+                            for(int outroCont2=0; outroCont2 < listaManha.getLength(); outroCont2++){
+                                
+                               if(listaManha.item(outroCont2).getLocalName().equals("altura")){
+                                    elemento2 = documentoFinal.createElement(listaManha.item(outroCont2).getLocalName());
+                                    elemento2.setTextContent(listaManha.item(outroCont2).getTextContent());
+                                    manha.appendChild(elemento2);
+                                    elemento1.appendChild(manha);
+                                    raizFinal.appendChild(elemento1);
+                               }
+                               
+                               
+                               
+                               
+                               
+                            }
+                            
+                        }
+                            ////////tarde
+                            if(filhosPrevisaoPorDia.item(outroCont).getLocalName().equals("tarde")){
+                            NodeList listaManha = filhosPrevisaoPorDia.item(outroCont).getChildNodes();
+                            Element tarde = documentoFinal.createElement("tarde");
+                            for(int outroCont2=0; outroCont2 < listaManha.getLength(); outroCont2++){
+                                
+                               if(listaManha.item(outroCont2).getLocalName().equals("altura")){
+                                    elemento2 = documentoFinal.createElement(listaManha.item(outroCont2).getLocalName());
+                                    elemento2.setTextContent(listaManha.item(outroCont2).getTextContent());
+                                    tarde.appendChild(elemento2);
+                                    elemento1.appendChild(tarde);
+                                    raizFinal.appendChild(elemento1);
+                                    
+                                    
+                               }
+                            }
+                            }
+                            /////////////////////////////noite
+                            
+                            if(filhosPrevisaoPorDia.item(outroCont).getLocalName().equals("noite")){
+                            NodeList listaManha = filhosPrevisaoPorDia.item(outroCont).getChildNodes();
+                            Element noite = documentoFinal.createElement("noite");
+                            for(int outroCont2=0; outroCont2 < listaManha.getLength(); outroCont2++){
+                               if (listaManha.item(outroCont2).getLocalName().equals("agitacao")){
+                                    elemento2 = documentoFinal.createElement(listaManha.item(outroCont2).getLocalName());
+                                    elemento2.setTextContent(listaManha.item(outroCont2).getTextContent());
+                                    noite.appendChild(elemento2);
+                                    elemento1.appendChild(noite);
+                                    raizFinal.appendChild(elemento1);
+                                    
+                                } 
+                               if(listaManha.item(outroCont2).getLocalName().equals("altura")){
+                                    elemento2 = documentoFinal.createElement(listaManha.item(outroCont2).getLocalName());
+                                    elemento2.setTextContent(listaManha.item(outroCont2).getTextContent());
+                                    noite.appendChild(elemento2);
+                                    elemento1.appendChild(noite);
+                                    raizFinal.appendChild(elemento1);
+                               }
+                            }
+                        }
+                        
+                            
+                            ///////////////////////////////
+                    }
+                    
+                    }
+               // }catch (SAXException ex) {
+               //         }
                 
-            GuardarRaiz=raiz.getLocalName();
-            System.out.println("Raiz filhos: "+raiz.getChildNodes().getLength());
-            NodeList filhosDeRaiz = raiz.getChildNodes();
-            for (int i = 0; i < filhosDeRaiz.getLength(); i++) {
-             Node filho = filhosDeRaiz.item(i);
-                System.out.println(filho.getLocalName());
-                
-                             
-            }
+                    
+                }
+          contaDiaPrevisao++;  campoPrev++; }
+        }
+        
             
-        } catch (SAXException | IIOException e) {
-            e.printStackTrace();
-        }
-        
-        
-        /////////////////////////////////////////////////////////////////////
-        
-        DOMImplementation di = new DOMImplementationImpl();
-        Document document = di.createDocument(null, GuardarRaiz, null);
-        Element alunos = document.createElement("alunos");
-              
-        Element raiz = document.getDocumentElement();
-        raiz.appendChild(alunos);
-        
-        for (int j = 0; j < 3; j++) {
             
-        Element aluno = document.createElement("aluno");
-        alunos.appendChild(aluno);
+            }catch (SAXException ex) {
+                        }
+            
+        salvar(documentoFinal);
+            imprime(1,documentoFinal);
+          
         
-        Text nome = document.createTextNode("Fulano");
-        aluno.appendChild(nome);
-       
-        Random rdn = new Random();
-        for (int i = 0; i < 3; i++) {
-            Element nota = document.createElement("nota");
-            nota.setTextContent(Integer.toString(rdn.nextInt(100)+1));
-            aluno.appendChild(nota);
-        }
         
         }
-        
-        imprime(0,raiz);
-        salvar(document);
-        
-        
-    }
-
+            
+            
     private static void imprime(int nivel, Node no) {
        
        switch(no.getNodeType()){
