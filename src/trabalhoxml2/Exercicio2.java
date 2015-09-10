@@ -56,7 +56,7 @@ public class Exercicio2 {
                 documentoFinal = di.createDocument(null, raizPrevisaoSemana.getLocalName(), null);
                 Element raizFinal=documentoFinal.getDocumentElement();
                 raizFinal.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance",
-    "xsi:schemaLocation", "https://github.com/iclodoaldo/trabalhoXml2/blob/master/src/XSD_ex_2.xsd");
+    "xsi:schemaLocation", "http://clodoaldo.info/XSD_ex_2.xsd");
                 NodeList filhosPrevisaoSemana = raizPrevisaoSemana.getChildNodes();
                 
         for(int cont = 0;cont < filhosPrevisaoSemana.getLength();cont++){//cidade, nome, uf, atualizacao...previsao
