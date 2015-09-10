@@ -5,18 +5,11 @@
  */
 package trabalhoxml2;
 
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.IIOException;
 import javax.swing.JOptionPane;
 import org.apache.xerces.dom.DOMImplementationImpl;
 import org.apache.xerces.parsers.DOMParser;
@@ -40,6 +33,8 @@ import org.xml.sax.SAXException;
 public class Exercicio2 {
     
     public static void main(String[] args) throws IOException {    
+        Map <Integer, Double> mapa = new HashMap<>();
+        
         DOMParser parser= new DOMParser();
                 
         InputSource source = new InputSource("http://servicos.cptec.inpe.br/XML/cidade/7dias/634/previsao.xml");
@@ -52,7 +47,7 @@ public class Exercicio2 {
         Document documentoFinal=null;
         Element elemento1=null;
         Element media=null;
-        String bosta="";
+        
                 
             try{
                 parser.parse(source);
@@ -60,6 +55,8 @@ public class Exercicio2 {
                 Element raizPrevisaoSemana = document.getDocumentElement();
                 documentoFinal = di.createDocument(null, raizPrevisaoSemana.getLocalName(), null);
                 Element raizFinal=documentoFinal.getDocumentElement();
+                raizFinal.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance",
+    "xsi:schemaLocation", "https://github.com/iclodoaldo/trabalhoXml2/blob/master/src/XSD_ex_2.xsd");
                 NodeList filhosPrevisaoSemana = raizPrevisaoSemana.getChildNodes();
                 
         for(int cont = 0;cont < filhosPrevisaoSemana.getLength();cont++){//cidade, nome, uf, atualizacao...previsao
@@ -77,15 +74,16 @@ public class Exercicio2 {
                    Double maxima=null;
                    Double minima=null;
                    
-                    
+                  
                 for(int cont2 = 0;cont2 < filhosDaPrevisao.getLength();cont2++){//dia,tempo,maxima,minima,iuv 
-                          
+                         
                     
                     if(filhosDaPrevisao.item(cont2).getLocalName().equals("dia")){
                         
                         elemento1 = documentoFinal.createElement(filhosDaPrevisao.item(cont2).getLocalName());
-                        Text textoNomePrevisao = documentoFinal.createTextNode(filhosDaPrevisao.item(cont2).getTextContent());
-                        elemento1.appendChild(textoNomePrevisao);
+                        //Text textoNomePrevisao = documentoFinal.createTextNode(filhosDaPrevisao.item(cont2).getTextContent());
+                        elemento1.setAttribute("data", filhosDaPrevisao.item(cont2).getTextContent());
+                        //elemento1.appendChild(textoNomePrevisao);
                         raizFinal.appendChild(elemento1);
                     }else{
                     
@@ -99,7 +97,7 @@ public class Exercicio2 {
                             media.setTextContent(Double.toString((maxima+minima)/2));
                             elemento1.appendChild(media);
                             raizFinal.appendChild(elemento1);
-                        bosta=Double.toString((maxima+minima)/2);    
+                           mapa.put(cont2, ((maxima+minima)/2));
                         }
                        
                     
@@ -131,8 +129,6 @@ public class Exercicio2 {
                                     elemento1.appendChild(manha);
                                     raizFinal.appendChild(elemento1);
                                }
-                               
-                               
                                
                                
                                
@@ -190,7 +186,7 @@ public class Exercicio2 {
                 
                     
                 }
-          contaDiaPrevisao++;  campoPrev++; }
+          contaDiaPrevisao++;}
         }
         
             

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xs:schema 
+    version="1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
+    
+    <xs:element name="cidade">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nome" type="xs:string"/>
+                <xs:element name="uf" type="xs:string"/>
+                <xs:element name="atualizacao" type="xs:string"/>
+                <xs:element name="dia" type="tipoDia" minOccurs="6" maxOccurs="6"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:complexType name="tipoDia">
+        <xs:sequence>
+            <xs:element name="manha" type="tipoManha" />
+            <xs:element name="tarde" type="tipoTarde" />
+            <xs:element name="noite" type="tipoNoite" />
+            <xs:element name="media" type="xs:decimal"/>
+        </xs:sequence>
+        <xs:attribute name="data" type="xs:date"/>
+    </xs:complexType>
+    
+    <xs:complexType name="tipoManha">
+        <xs:sequence>
+            <xs:element name="altura" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+            
+    <xs:complexType name="tipoTarde">
+        <xs:sequence>
+            <xs:element name="altura" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>           
+    
+    <xs:complexType name="tipoNoite">
+        <xs:sequence>
+            <xs:element name="agitacao" type="xs:string"/>
+            <xs:element name="altura" type="xs:decimal"/>           
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
